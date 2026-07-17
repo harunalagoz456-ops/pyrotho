@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#1fa88c" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="Pyrotho" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="description" content="Learn Python with Pyro — levels, XP, and friendly guidance." />
+    <title>Pyrotho</title>
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192.png" />
+    <link rel="apple-touch-icon" href="/icons/icon-192.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/styles.css" />
+  </head>
+  <body>
+    <div class="bg-glow" aria-hidden="true"></div>
+    <div class="bg-grid" aria-hidden="true"></div>
+
+    <header class="topbar">
+      <div class="brand-mark" data-go="home">
+        <span class="brand-dot"></span>
+        <span class="brand-name">Pyrotho</span>
+      </div>
+      <div class="topbar-right">
+        <label class="lang-wrap">
+          <span class="sr-only" data-i18n="langLabel">Language</span>
+          <select id="langSelect" aria-label="Language">
+            <option value="en">English</option>
+            <option value="es">Español</option>
+            <option value="fr">Français</option>
+            <option value="tr">Türkçe</option>
+          </select>
+        </label>
+        <div id="playerStats" class="player-stats hidden">
+          <span class="stat xp"><span id="xpValue">0</span> XP</span>
+          <span class="stat lvl">Lv <span id="levelValue">1</span></span>
+          <button type="button" class="stat profile-btn" id="profileBtn" data-action="toggle-profile" hidden>
+            <span id="profileBtnLabel">Profil</span>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <main id="app">
+      <!-- screens injected by app.js -->
+    </main>
+
+    <script type="module" src="js/app.js?v=16"></script>
+    <script>
+      if ("serviceWorker" in navigator) {
+        window.addEventListener("load", () => {
+          navigator.serviceWorker.register("/sw.js").then((reg) => {
+            reg.update().catch(() => {});
+            navigator.serviceWorker.addEventListener("controllerchange", () => {
+              // New SW took over — one soft reload so fresh JS/CSS apply
+              if (sessionStorage.getItem("pyrotho-sw-reloaded")) return;
+              sessionStorage.setItem("pyrotho-sw-reloaded", "1");
+              location.reload();
+            });
+          }).catch(() => {});
+        });
+      }
+    </script>
+  </body>
+</html>
