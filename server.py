@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Pyrotho local server: static files + natural TTS via edge-tts (free Microsoft voices)."""
+"""Pyrotho local server: static files + natural TTS via edge-tts."""
 
 from __future__ import annotations
 
@@ -62,28 +62,25 @@ class Handler(SimpleHTTPRequestHandler):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, directory=str(ROOT), **kwargs)
 
-        def end_headers(self):
+    def end_headers(self):
         self.send_header("Cache-Control", "no-cache")
         self.send_header("X-Content-Type-Options", "nosniff")
         self.send_header("Referrer-Policy", "no-referrer")
         super().end_headers()
 
     def translate_path(self, path: str) -> str:
-        """Keep private files and caches outside the public surface."""
+        """Keep private files, caches and symlinks outside the public surface."""
         translated = Path(super().translate_path(path)).resolve()
-
         try:
             relative = translated.relative_to(ROOT)
         except ValueError:
             return str(ROOT / "__not_found__")
-
         if any(part.startswith(".") for part in relative.parts):
             return str(ROOT / "__not_found__")
-
         if relative.parts and relative.parts[0] not in PUBLIC_PATHS:
             return str(ROOT / "__not_found__")
-
         return str(translated)
+
     def do_GET(self):
         parsed = urlparse(self.path)
         if parsed.path == "/api/tts":
@@ -105,12 +102,11 @@ class Handler(SimpleHTTPRequestHandler):
         if parsed.path != "/api/tts":
             self.send_error(404)
             return
-                try:
+        try:
             length = int(self.headers.get("Content-Length") or 0)
         except ValueError:
             self.send_error(400, "Invalid Content-Length")
             return
-
         if length < 0 or length > MAX_REQUEST_BYTES:
             self.send_error(413, "Request body too large")
             return
@@ -133,11 +129,11 @@ class Handler(SimpleHTTPRequestHandler):
             text = text[:MAX_TEXT]
         try:
             audio = run_tts(text, lang)
-                except Exception:  # noqa: BLE001  # noqa: BLE001
+        except Exception:  # noqa: BLE001
             self.send_response(502)
             self.send_header("Content-Type", "application/json")
             self.end_headers()
-                        self.wfile.write(json.dumps({"error": "Speech service unavailable"}).encode())
+            self.wfile.write(json.dumps({"error": "Speech service unavailable"}).encode())
             return
 
         self.send_response(200)
@@ -147,7 +143,6 @@ class Handler(SimpleHTTPRequestHandler):
         self.wfile.write(audio)
 
     def log_message(self, fmt, *args):
-        # quieter logs
         if args and isinstance(args[0], str) and args[0].startswith("GET /api/"):
             super().log_message(fmt, *args)
         elif args and isinstance(args[0], str) and "POST /api/" in args[0]:
