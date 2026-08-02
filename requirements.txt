@@ -1,0 +1,5 @@
+edge-tts
+fastapi
+uvicorn[standard]
+aiofiles
+python-multipart

@@ -2,20 +2,19 @@
 
 Learn Python with Pyro — levels, XP, and friendly coaching.
 
-## Run locally
+## Run locally (original)
 
 ```bash
 ./start.sh
 ```
 
-Then open [http://127.0.0.1:8765](http://127.0.0.1:8765).
+Then open http://127.0.0.1:8765
 
-## Stack
+## Run with FastAPI (recommended for production/development)
 
-- Static web app (HTML / CSS / JS modules)
-- Local Python server for TTS (`server.py` + `edge-tts`)
-- PWA installable shell
+```bash
+pip install -r requirements.txt
+uvicorn server_fastapi:app --host 127.0.0.1 --port 8765
+```
 
-## Languages
-
-English · Español · Français · Türkçe
+This variant includes CORS restrictions and a simple rate limiter. See server_fastapi.py for details.
