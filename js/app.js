@@ -164,8 +164,12 @@ function orderedLessonIds() {
 }
 
 function isUnlocked(id) {
-  // Temporary: all lessons unlocked for testing / free exploration
-  return true;
+  const ids = orderedLessonIds();
+  const index = ids.indexOf(id);
+
+  if (index < 0) return false;
+
+  return index === 0 || state.completed.includes(ids[index - 1]);
 }
 
 function renderLanding() {
